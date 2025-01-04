@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>2025春节倒计时</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            background: #000;
+            color: #fff;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+
+        .countdown-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 100px;
+        }
+
+        .title {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: 600;
+        }
+
+        .countdown {
+            display: flex;
+            gap: 15px;
+        }
+
+        .time-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .number {
+            background: linear-gradient(145deg, rgba(255, 77, 79, 0.9), rgba(255, 45, 85, 0.9));
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 15px 20px;
+            border-radius: 10px;
+            min-width: 40px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(255, 45, 85, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .label {
+            margin-top: 10px;
+            color: #fff;
+            font-size: 14px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: 500;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 100;
+            display: none;
+        }
+
+        .video-container.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            z-index: 101;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <img class="bg-image" src="bk.jpg" alt="背景">
+        <div class="countdown-container">
+            <div class="title">距离2025年春节还有</div>
+            <div class="countdown">
+                <div class="time-item">
+                    <div class="number" id="days">00</div>
+                    <div class="label">天</div>
+                </div>
+                <div class="time-item">
+                    <div class="number" id="hours">00</div>
+                    <div class="label">时</div>
+                </div>
+                <div class="time-item">
+                    <div class="number" id="minutes">00</div>
+                    <div class="label">分</div>
+                </div>
+                <div class="time-item">
+                    <div class="number" id="seconds">00</div>
+                    <div class="label">秒</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="video-container" id="videoContainer">
+        <button class="close-btn" onclick="closeVideo()">关闭</button>
+        <video id="myVideo" controls>
+            <source src="video.mp4" type="video/mp4">
+            您的浏览器不支持视频播放。
+        </video>
+    </div>
+
+    <script>
+        function updateCountdown() {
+            const springFestival = new Date('2025-01-29T00:00:00').getTime();
+            
+            function calculate() {
+                const now = new Date().getTime();
+                const timeLeft = springFestival - now;
+
+                if (timeLeft < 0) {
+                    document.getElementById('days').textContent = '00';
+                    document.getElementById('hours').textContent = '00';
+                    document.getElementById('minutes').textContent = '00';
+                    document.getElementById('seconds').textContent = '00';
+                    return;
+                }
+
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = String(days).padStart(2, '0');
+                document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            }
+
+            calculate();
+            setInterval(calculate, 1000);
+        }
+
+        function showVideo() {
+            document.getElementById('videoContainer').classList.add('active');
+            document.getElementById('myVideo').play();
+        }
+
+        function closeVideo() {
+            document.getElementById('videoContainer').classList.remove('active');
+            document.getElementById('myVideo').pause();
+        }
+
+        // 点击页面任意位置播放视频
+        document.getElementById('mainContainer').addEventListener('click', showVideo);
+
+        // 启动倒计时
+        updateCountdown();
+    </script>
+</body>
+</html> 
